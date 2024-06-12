@@ -21,7 +21,7 @@ class Publisher(models.Model):
 class Game(models.Model):
     name = models.CharField(max_length=255)
     platform = models.ForeignKey(Platform, on_delete=models.DO_NOTHING)
-    year = models.IntegerField()
+    year = models.IntegerField(null=True)
     genre = models.ForeignKey(Genre, on_delete=models.DO_NOTHING)
     publisher = models.ForeignKey(Publisher, on_delete=models.DO_NOTHING)
     na_sales = models.DecimalField(max_digits=10, decimal_places=2)
