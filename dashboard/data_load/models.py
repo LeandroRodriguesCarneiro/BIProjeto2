@@ -24,11 +24,10 @@ class Game(models.Model):
     year = models.IntegerField(null=True)
     genre = models.ForeignKey(Genre, on_delete=models.DO_NOTHING)
     publisher = models.ForeignKey(Publisher, on_delete=models.DO_NOTHING)
-    na_sales = models.DecimalField(max_digits=10, decimal_places=2)
-    eu_sales = models.DecimalField(max_digits=10, decimal_places=2)
-    jp_sales = models.DecimalField(max_digits=10, decimal_places=2)
-    other_sales = models.DecimalField(max_digits=10, decimal_places=2)
-    global_sales = models.DecimalField(max_digits=10, decimal_places=2)
-
+    na_sales = models.FloatField()
+    eu_sales = models.FloatField()
+    jp_sales = models.FloatField()
+    other_sales = models.FloatField()
+    global_sales = models.FloatField()
     def __str__(self):
         return self.name
