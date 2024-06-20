@@ -9,7 +9,7 @@ def home(request):
 
 def test(request):
     if request.method == 'GET':
-        games = Game.objects.all()[:100]
+        games = Game.objects.all()[:1000]
 
         context = {
             'games': games
