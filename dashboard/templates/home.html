@@ -3,16 +3,168 @@
 
 {% block 'header' %}
 
-    <!-- <link href="{% static 'users/css/register.css' %}" rel="stylesheet">
-    <link href="{% static 'flashcard/css/new_flashcard.css' %}" rel="stylesheet">
-    <link href="{% static 'flashcard/css/start_challenge.css' %}" rel="stylesheet">
-    <link href="{% static 'flashcard/css/challenge.css' %}" rel="stylesheet"> -->
+    <link href="{% static 'general/css/charts.css' %}" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            var dataGlobalSales = google.visualization.arrayToDataTable({{ top_global_sales|safe }});
+            var optionsGlobalSales = {
+                title: '5 Jogos mais vendidos no mundo',
+                chartArea: {width: '50%'},
+                hAxis: {
+                    title: 'Total de vendas no mundo',
+                    minValue: 0
+                },
+                vAxis: {
+                    title: 'Jogos'
+                }
+            };
+            var chartGlobalSales = new google.visualization.ColumnChart(document.getElementById('global_sales_chart'));
+            chartGlobalSales.draw(dataGlobalSales, optionsGlobalSales);
+            
+            var dataJpSales = google.visualization.arrayToDataTable({{ top_jp_sales|safe }});
+            var optionsJpSales = {
+                title: '5 Jogos mais vendidos no Japão',
+                chartArea: {width: '50%'},
+                hAxis: {
+                    title: 'Total de vendas no Japão',
+                    minValue: 0
+                },
+                vAxis: {
+                    title: 'Jogos'
+                }
+            };
+            var chartJpSales = new google.visualization.ColumnChart(document.getElementById('jp_sales_chart'));
+            chartJpSales.draw(dataJpSales, optionsJpSales);
+
+            var dataNaSales = google.visualization.arrayToDataTable({{ top_na_sales|safe }});
+            var optionsNaSales = {
+                title: '5 Jogos mais vendidos na América',
+                chartArea: {width: '50%'},
+                hAxis: {
+                    title: 'Total de vendas na América',
+                    minValue: 0
+                },
+                vAxis: {
+                    title: 'Jogos'
+                }
+            };
+            var chartNaSales = new google.visualization.ColumnChart(document.getElementById('na_sales_chart'));
+            chartNaSales.draw(dataNaSales, optionsNaSales);
+
+            var dataEuSales = google.visualization.arrayToDataTable({{ top_eu_sales|safe }});
+            var optionsEuSales = {
+                title: '5 Jogos mais vendidos na Europa',
+                chartArea: {width: '50%'},
+                hAxis: {
+                    title: 'Total de vendas na Europa',
+                    minValue: 0
+                },
+                vAxis: {
+                    title: 'Jogos'
+                }
+            };
+            var chartEuSales = new google.visualization.ColumnChart(document.getElementById('eu_sales_chart'));
+            chartEuSales.draw(dataEuSales, optionsEuSales);
+        }    
+
+        window.addEventListener('load', function() {
+            var tables = document.querySelectorAll('.sync-width');
+            tables.forEach(function(table) {
+              var ths = table.querySelectorAll('thead th *'); // Seleciona todos os elementos dentro do cabeçalho (incluindo texto)
+              var tds = table.querySelectorAll('tbody tr:first-child td');
+          
+              tds.forEach(function(td, index) {
+                var maxWidth = 0;
+                ths[index].childNodes.forEach(function(node) {
+                  if (node.nodeType === Node.TEXT_NODE) {
+                    var textWidth = node.offsetWidth;
+                    if (textWidth > maxWidth) {
+                      maxWidth = textWidth;
+                    }
+                  }
+                });
+          
+                td.style.width = maxWidth + 'px';
+              });
+            });
+          });
+    </script>
 {% endblock 'header' %}
 {% block 'content' %}
 {% include "partials/header.html" %}
     <div class="container">
-        <iframe title="AnaliseBI" width="1140" height="541.25" src="https://app.powerbi.com/links/MEEd7PXAdE?ctid=9b60158e-d455-4e80-aa7c-17cd9ffce6ba&pbi_source=linkShare" frameborder="0" allowFullScreen="true"></iframe>
+        {% comment %} <iframe title="AnaliseBI" width="1140" height="541.25" src="https://app.powerbi.com/links/MEEd7PXAdE?ctid=9b60158e-d455-4e80-aa7c-17cd9ffce6ba&pbi_source=linkShare" frameborder="0" allowFullScreen="true"></iframe> {% endcomment %}
+        <div class="chart-container">
+            <div id="global_sales_chart" class="chart"></div>
+            <div id="jp_sales_chart" class="chart"></div>
+        </div>
+        <div class="chart-container">
+            <div id="na_sales_chart" class="chart"></div>
+            <div id="eu_sales_chart" class="chart"></div>
+        </div>
+        <div class="table-container">
+            <div class="table-item">
+                <table class="sync-width">
+                    <thead>
+                        <tr>
+                            <th>Gênero</th>
+                            <th>Total de Vendas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for genre in genre_totals %}
+                        <tr>
+                            <td>{{ genre.genre }}</td>
+                            <td>{{ genre.total_sales|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-item">
+                <table class="sync-width">
+                    <thead>
+                        <tr>
+                            <th>Editora</th>
+                            <th>Total de Vendas</th>
+                            <th>Número de Jogos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for publisher in publisher_totals %}
+                        <tr>
+                            <td>{{ publisher.publisher }}</td>
+                            <td>{{ publisher.total_sales|floatformat:2 }}</td>
+                            <td>{{ publisher.publisher_game_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-item">
+                <table class="sync-width">
+                    <thead>
+                        <tr>
+                            <th>Plataforma</th>
+                            <th>Total de Vendas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for platform in platform_totals %}
+                        <tr>
+                            <td>{{ platform.platform }}</td>
+                            <td>{{ platform.total_sales|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock 'content' %}
